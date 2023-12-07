@@ -1,8 +1,14 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import { Pressable, useColorScheme } from 'react-native';
+import { COLORS, icons, images, SIZES } from "../../constants";
+import { useCallback } from 'react';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import {
+  ScreenHeaderBtn,
+} from "../../components";
 
-import Colors from '../../constants/Colors';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -16,38 +22,36 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-
+  const [fontsLoaded] = useFonts({
+    DMBold: require('../../assets/fonts/DMSans-Bold.ttf'),
+    DMMedium: require('../../assets/fonts/DMSans-Medium.ttf'),
+    DMRegular: require('../../assets/fonts/DMSans-Regular.ttf')
+  })
+  const onLayoutRootView = useCallback(async() => {
+    if(fontsLoaded) {
+      await SplashScreen.hideAsync()
+    }
+  },[fontsLoaded])
+  if(!fontsLoaded) return null;
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-      }}>
+    <Tabs>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+          title: 'Home',
+          headerTitle: '',
+          headerTitleAlign:'center',
+          headerStyle:{
+            backgroundColor: COLORS.lightWhite,
+          },
+          headerShadowVisible: false,
+          headerLeft: () => (
+            <ScreenHeaderBtn iconUrl={icons.menu} dimension="60%"/>
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="two"
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={'#444262'} />,
+          headerRight: () => (
+            <ScreenHeaderBtn iconUrl={images.profile} dimension="80%"/>
+          ),
         }}
       />
     </Tabs>
